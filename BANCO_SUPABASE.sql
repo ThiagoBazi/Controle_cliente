@@ -1,0 +1,11 @@
+create extension if not exists pgcrypto;
+create table if not exists public.clients(id uuid primary key default gen_random_uuid(),name text not null,phone text not null,total_sold numeric not null default 0 check(total_sold>=0),total_paid numeric not null default 0 check(total_paid>=0),created_at timestamptz not null default now());
+create table if not exists public.payments(id uuid primary key default gen_random_uuid(),client_id uuid not null references public.clients(id) on delete cascade,value numeric not null check(value>0),created_at timestamptz not null default now());
+alter table public.clients enable row level security; alter table public.payments enable row level security;
+drop policy if exists clients_test_all on public.clients; drop policy if exists payments_test_all on public.payments;
+create policy clients_test_all on public.clients for all to anon,authenticated using(true) with check(true);
+create policy payments_test_all on public.payments for all to anon,authenticated using(true) with check(true);
+grant usage on schema public to anon,authenticated; grant select,insert,update,delete on public.clients,public.payments to anon,authenticated;
+alter table public.clients replica identity full; alter table public.payments replica identity full;
+do $$ begin if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='clients') then alter publication supabase_realtime add table public.clients; end if; if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='payments') then alter publication supabase_realtime add table public.payments; end if; end $$;
+notify pgrst,'reload schema';
