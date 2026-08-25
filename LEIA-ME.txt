@@ -1,1 +1,8 @@
-Versão conectada ao Supabase. Substitua TODOS os arquivos do GitHub pelos desta pasta. O cliente de teste existente no banco aparecerá automaticamente.
+Controle de Clientes v5
+Base: última versão com Supabase.
+Única alteração funcional: a cobrança do WhatsApp identifica automaticamente o horário do aparelho:
+00:00–11:59 Bom dia
+12:00–17:59 Boa tarde
+18:00–23:59 Boa noite
+
+Substitua os arquivos do GitHub pelos desta pasta. Nenhuma alteração no banco Supabase é necessária.
