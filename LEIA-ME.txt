@@ -1,6 +1,1 @@
-CONTROLE DE CLIENTES v3 - TESTE LOCAL
-Não usa Supabase nesta etapa.
-Salva os dados no navegador usando localStorage.
-Novo cliente: nome + WhatsApp + valor inicial devido.
-Funções: adicionar valor, receber pagamento, pagamentos rápidos, corrigir saldo, editar, excluir, filtros, pesquisa e cobrança pelo WhatsApp.
-Substitua TODOS os arquivos antigos no GitHub pelos arquivos desta pasta.
+Versão conectada ao Supabase. Substitua TODOS os arquivos do GitHub pelos desta pasta. O cliente de teste existente no banco aparecerá automaticamente.
