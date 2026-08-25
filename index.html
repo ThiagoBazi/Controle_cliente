@@ -1,25 +1,164 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1769e0"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><title>Controle de Clientes</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#f4f6fb;color:#172033}button,input{font:inherit}.app{max-width:1050px;margin:auto;padding:16px}.top,.head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}h1{margin:3px 0}.muted{color:#697386;font-size:13px}.btn{border:0;border-radius:13px;min-height:46px;padding:0 15px;font-weight:750;cursor:pointer}.blue{background:#1769e0;color:#fff}.dark{background:#172033;color:#fff}.green{background:#168a5b;color:#fff}.light{background:#fff;border:1px solid #e0e5ed}.red{color:#bd3030;background:#fff;border:1px solid #efcaca}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:17px 0}.stat,.card{background:#fff;border:1px solid #e3e8ef;border-radius:18px}.stat{padding:14px}.stat b{display:block;font-size:20px;margin-top:5px}.grid{display:grid;grid-template-columns:.85fr 1.35fr;gap:13px}.card{padding:15px}.search,input{width:100%;height:47px;border:1px solid #ccd4df;border-radius:12px;padding:0 12px;font-size:16px}.filters,.actions,.quick{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.filter.on{background:#172033;color:#fff}.client{width:100%;border:1px solid #e3e8ef;background:#fff;border-radius:13px;padding:11px;margin-bottom:8px;text-align:left;display:flex;justify-content:space-between;cursor:pointer}.client.on{border-color:#1769e0;background:#eef5ff}.right{text-align:right}.head{border-bottom:1px solid #e3e8ef;padding-bottom:13px}.big{padding:23px 0}.value{font-size:40px;font-weight:900}.badge{display:inline-block;padding:6px 10px;border-radius:99px;background:#fff0d2;color:#805000;font-size:13px;font-weight:700}.ok{background:#dff6eb;color:#126640}.twocol,.main{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{background:#f5f7fa;border-radius:13px;padding:13px}.mini b{display:block;font-size:19px;margin-top:4px}.main{margin-top:13px}.empty{text-align:center;color:#697386;padding:28px}.modalbg{display:none;position:fixed;inset:0;background:#0007;z-index:9;align-items:flex-end;justify-content:center;padding:12px}.modalbg.show{display:flex}.modal{background:#fff;width:min(540px,100%);border-radius:20px;padding:18px}.field{margin:11px 0}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}.modal .actions{justify-content:flex-end}.footer{text-align:center;color:#697386;font-size:12px;margin:18px}
-@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.main{grid-template-columns:1fr}.value{font-size:35px}.app{padding:11px}}
-</style></head><body><div class="app"><div class="top"><div><div class="muted">Controle simples de vendas a receber</div><h1>Controle de Clientes</h1></div><button class="btn blue" onclick="newClient()">+ Novo cliente</button></div><div class="stats"><div class="stat"><span class="muted">Total a receber</span><b id="sDue">R$ 0,00</b></div><div class="stat"><span class="muted">Recebido no mês</span><b id="sMonth">R$ 0,00</b></div><div class="stat"><span class="muted">Clientes devendo</span><b id="sCount">0</b></div><div class="stat"><span class="muted">Quitados</span><b id="sPaid">0</b></div></div><div class="grid"><section class="card"><input id="search" class="search" placeholder="Procurar nome ou telefone" oninput="list()"><div class="filters"><button class="btn light filter on" data-f="all" onclick="filt(this)">Todos</button><button class="btn light filter" data-f="due" onclick="filt(this)">Devendo</button><button class="btn light filter" data-f="paid" onclick="filt(this)">Quitados</button></div><div id="list"></div></section><section id="detail" class="card"></section></div><div class="footer">Controle de Clientes v2 • teste local</div></div><div id="mbg" class="modalbg" onclick="if(event.target===this)closeM()"><div class="modal"><h2 id="mt"></h2><div id="mc"></div></div></div>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1769e0">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<title>Controle de Clientes</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}button,input{font:inherit}.wrap{max-width:1050px;margin:auto;padding:16px}.top,.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.muted{font-size:13px;color:#6b7280}h1{margin:3px 0;font-size:27px}.btn{min-height:46px;border:0;border-radius:13px;padding:0 15px;font-weight:750;cursor:pointer}.blue{background:#1769e0;color:#fff}.dark{background:#172033;color:#fff}.green{background:#15855a;color:#fff}.light{background:#fff;color:#172033;border:1px solid #dfe5ed}.danger{background:#fff;color:#bd3030;border:1px solid #efcaca}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:17px 0}.stat,.card{background:#fff;border:1px solid #e3e8ef;border-radius:18px}.stat{padding:14px}.stat b{display:block;font-size:20px;margin-top:5px}.layout{display:grid;grid-template-columns:.85fr 1.35fr;gap:13px}.card{padding:15px}.search,.field input{width:100%;height:47px;border:1px solid #cdd5df;border-radius:12px;padding:0 12px;font-size:16px}.filters{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.filter.active{background:#172033;color:#fff}.client{width:100%;display:flex;justify-content:space-between;gap:8px;text-align:left;background:#fff;border:1px solid #e3e8ef;border-radius:13px;padding:11px;margin-bottom:8px;cursor:pointer}.client.active{border-color:#1769e0;background:#eef5ff}.right{text-align:right}.head{border-bottom:1px solid #e3e8ef;padding-bottom:13px}.big{padding:23px 0}.amount{font-size:40px;font-weight:900;letter-spacing:-1px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#fff0d2;color:#805000;font-size:13px;font-weight:700}.badge.ok{background:#dff6eb;color:#126640}.twocol,.mainActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{background:#f5f7fa;border-radius:13px;padding:13px}.mini b{display:block;font-size:19px;margin-top:4px}.mainActions{margin-top:13px}.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.empty{text-align:center;color:#6b7280;padding:30px 10px}.modalBg{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end;justify-content:center;padding:12px}.modalBg.show{display:flex}.modal{width:min(540px,100%);background:#fff;border-radius:20px;padding:18px;max-height:90vh;overflow:auto}.modal h2{margin:0 0 14px}.field{margin:11px 0}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}.modalActions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:14px}.footer{text-align:center;color:#6b7280;font-size:12px;margin:20px}
+@media(max-width:760px){.wrap{padding:11px}.stats{grid-template-columns:1fr 1fr}.layout{grid-template-columns:1fr}.mainActions{grid-template-columns:1fr}.amount{font-size:35px}.stat b{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="top"><div><div class="muted">Controle simples de vendas a receber</div><h1>Controle de Clientes</h1></div><button id="newClientBtn" class="btn blue">+ Novo cliente</button></div>
+ <div class="stats">
+  <div class="stat"><span class="muted">Total a receber</span><b id="totalDue">R$ 0,00</b></div>
+  <div class="stat"><span class="muted">Recebido no mês</span><b id="monthPaid">R$ 0,00</b></div>
+  <div class="stat"><span class="muted">Clientes devendo</span><b id="dueCount">0</b></div>
+  <div class="stat"><span class="muted">Quitados</span><b id="paidCount">0</b></div>
+ </div>
+ <div class="layout">
+  <section class="card">
+   <input id="search" class="search" placeholder="Procurar nome ou telefone">
+   <div class="filters"><button class="btn light filter active" data-filter="all">Todos</button><button class="btn light filter" data-filter="due">Devendo</button><button class="btn light filter" data-filter="paid">Quitados</button></div>
+   <div id="clientList"></div>
+  </section>
+  <section id="detail" class="card"></section>
+ </div>
+ <div class="footer">Controle de Clientes • versão de teste local</div>
+</div>
+<div id="modalBg" class="modalBg"><div class="modal"><h2 id="modalTitle"></h2><div id="modalBody"></div></div></div>
 <script>
-let cs=[],ps=[],sel=null,fil='all';
-const M=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(+v||0),D=c=>Math.max(0,+c.total_sold-+c.total_paid),mon=()=>new Date().toISOString().slice(0,7),E=s=>String(s||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
-const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
-function saveLocal(){localStorage.setItem('controle_clientes_v2',JSON.stringify({cs,ps}))}
-function init(){try{const x=JSON.parse(localStorage.getItem('controle_clientes_v2')||'{}');cs=Array.isArray(x.cs)?x.cs:[];ps=Array.isArray(x.ps)?x.ps:[]}catch(e){cs=[];ps=[]}if(!sel&&cs.length)sel=cs[0].id;render()}
-async function load(){saveLocal();if(sel&&!cs.some(c=>c.id===sel))sel=null;if(!sel&&cs.length)sel=cs[0].id;render()}
-function render(){stats();list();det()}function stats(){sDue.textContent=M(cs.reduce((s,c)=>s+D(c),0));sCount.textContent=cs.filter(c=>D(c)>0).length;sPaid.textContent=cs.filter(c=>+c.total_sold>0&&D(c)==0).length;sMonth.textContent=M(ps.filter(p=>p.created_at.slice(0,7)===mon()).reduce((s,p)=>s+(+p.value),0))}
-function filt(b){fil=b.dataset.f;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('on',x===b));list()}function list(){let q=search.value.toLowerCase(),a=cs.filter(c=>(c.name.toLowerCase().includes(q)||c.phone.includes(q))&&(fil==='all'||fil==='due'&&D(c)>0||fil==='paid'&&+c.total_sold>0&&D(c)==0)).sort((a,b)=>D(b)-D(a));document.getElementById('list').innerHTML=a.length?a.map(c=>`<button class="client ${sel===c.id?'on':''}" onclick="sel='${c.id}';render()"><div><b>${E(c.name)}</b><div class="muted">${E(c.phone)}</div></div><div class="right"><span class="muted">Falta</span><br><b>${M(D(c))}</b></div></button>`).join(''):'<div class="empty">Nenhum cliente.</div>'}
-function cur(){return cs.find(c=>c.id===sel)}function det(){let c=cur();if(!c){detail.innerHTML='<div class="empty">Cadastre um cliente para começar.</div>';return}let d=D(c),ok=+c.total_sold>0&&d===0;detail.innerHTML=`<div class="head"><div><span class="muted">CLIENTE</span><h2 style="margin:3px 0">${E(c.name)}</h2><div class="muted">${E(c.phone)}</div></div><div class="actions"><button class="btn green" onclick="whats()">Cobrar WhatsApp</button><button class="btn light" onclick="editClient()">Editar</button></div></div><div class="big"><div class="muted">Falta pagar</div><div class="value">${M(d)}</div><span class="badge ${ok?'ok':''}">${ok?'✓ QUITADO':'Pagamento pendente'}</span></div><div class="twocol"><div class="mini"><span class="muted">Total vendido</span><b>${M(c.total_sold)}</b></div><div class="mini"><span class="muted">Total recebido</span><b>${M(c.total_paid)}</b></div></div><div class="main"><button class="btn blue" onclick="amountM('sale')">+ Adicionar valor</button><button class="btn dark" onclick="amountM('pay')">+ Receber pagamento</button></div><div class="muted" style="margin-top:15px">Recebimento rápido</div><div class="quick"><button class="btn light" onclick="quick(50)">R$ 50</button><button class="btn light" onclick="quick(100)">R$ 100</button><button class="btn light" onclick="quick(200)">R$ 200</button><button class="btn light" onclick="balance()">Corrigir saldo</button></div>`}
-function modal(t,c){mt.textContent=t;mc.innerHTML=c;mbg.classList.add('show')}function closeM(){mbg.classList.remove('show')}
-function newClient(){modal('Novo cliente',`<div class="field"><label>Nome</label><input id="nm" placeholder="Nome do cliente"></div><div class="field"><label>WhatsApp</label><input id="ph" inputmode="tel" placeholder="51999999999"></div><div class="field"><label>Valor que já está devendo</label><input id="initialDue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div><div class="actions"><button class="btn light" onclick="closeM()">Cancelar</button><button class="btn blue" onclick="saveClient()">Cadastrar</button></div>`)}
-async function saveClient(){let name=nm.value.trim(),phone=ph.value.replace(/\D/g,''),initial=Number(initialDue.value||0);if(!name||phone.length<10)return alert('Informe nome e telefone.');if(initial<0||!Number.isFinite(initial))return alert('Informe um valor válido.');let c={id:uid(),name,phone,total_sold:initial,total_paid:0,created_at:new Date().toISOString()};cs.push(c);sel=c.id;closeM();await load()}
-function editClient(){let c=cur();modal('Editar cliente',`<div class="field"><label>Nome</label><input id="nm" value="${E(c.name)}"></div><div class="field"><label>WhatsApp</label><input id="ph" value="${E(c.phone)}"></div><div class="actions"><button class="btn red" onclick="del()">Excluir</button><button class="btn light" onclick="closeM()">Cancelar</button><button class="btn blue" onclick="saveEdit()">Salvar</button></div>`)}async function saveEdit(){let c=cur(),name=nm.value.trim(),phone=ph.value.replace(/\D/g,'');if(!name||phone.length<10)return alert('Informe nome e telefone.');c.name=name;c.phone=phone;closeM();await load()}
-async function del(){let c=cur();if(!confirm('Excluir '+c.name+'?'))return;cs=cs.filter(x=>x.id!==c.id);ps=ps.filter(x=>x.client_id!==c.id);sel=null;closeM();await load()}
-function amountM(type){modal(type==='sale'?'Adicionar valor':'Receber pagamento',`<div class="field"><label>${type==='sale'?'Valor da nova venda':'Valor recebido'}</label><input id="amt" type="number" step="0.01" inputmode="decimal"></div><div class="actions"><button class="btn light" onclick="closeM()">Cancelar</button><button class="btn blue" onclick="saveAmount('${type}')">Salvar</button></div>`)}async function saveAmount(t){let v=+amt.value,c=cur();if(!(v>0))return alert('Valor inválido.');if(t==='sale')c.total_sold=+c.total_sold+v;else await pay(v);closeM();await load()}
-async function pay(v){let c=cur();c.total_paid=+c.total_paid+v;ps.push({id:uid(),client_id:c.id,value:v,created_at:new Date().toISOString()});saveLocal()}
-async function quick(v){if(!confirm('Registrar '+M(v)+' recebido?'))return;await pay(v);await load()}
-function balance(){let c=cur();modal('Corrigir saldo',`<div class="muted">Use para corrigir rapidamente um valor errado.</div><div class="field"><label>Quanto deve agora?</label><input id="bal" type="number" step="0.01" value="${D(c)}"></div><div class="actions"><button class="btn light" onclick="closeM()">Cancelar</button><button class="btn blue" onclick="saveBal()">Corrigir</button></div>`)}async function saveBal(){let c=cur(),v=+bal.value;if(v<0||!Number.isFinite(v))return alert('Valor inválido.');c.total_sold=+c.total_paid+v;closeM();await load()}
-function whats(){let c=cur(),txt=`Olá, ${c.name}! Passando para informar que seu saldo pendente é de ${M(D(c))}. Obrigado!`,p=c.phone.replace(/\D/g,'');window.open(`https://wa.me/55${p}?text=${encodeURIComponent(txt)}`,'_blank')}if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));init();
-</script></body></html>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const STORAGE="controle_clientes_v3";
+let clients=[],payments=[],selectedId=null,currentFilter="all";
+
+function id(){return (window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2)}
+function money(v){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0)}
+function owed(c){return Math.max(0,Number(c.totalSold||0)-Number(c.totalPaid||0))}
+function month(){return new Date().toISOString().slice(0,7)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+function persist(){localStorage.setItem(STORAGE,JSON.stringify({clients,payments}))}
+function restore(){try{const x=JSON.parse(localStorage.getItem(STORAGE)||"{}");clients=Array.isArray(x.clients)?x.clients:[];payments=Array.isArray(x.payments)?x.payments:[]}catch(e){clients=[];payments=[]}}
+function selected(){return clients.find(c=>c.id===selectedId)||null}
+
+function render(){
+ if(selectedId&&!selected())selectedId=null;
+ if(!selectedId&&clients.length)selectedId=clients[0].id;
+ $("totalDue").textContent=money(clients.reduce((s,c)=>s+owed(c),0));
+ $("monthPaid").textContent=money(payments.filter(p=>String(p.createdAt).slice(0,7)===month()).reduce((s,p)=>s+Number(p.value||0),0));
+ $("dueCount").textContent=clients.filter(c=>owed(c)>0).length;
+ $("paidCount").textContent=clients.filter(c=>Number(c.totalSold)>0&&owed(c)===0).length;
+ renderList(); renderDetail();
+}
+function renderList(){
+ const q=$("search").value.trim().toLowerCase();
+ const arr=clients.filter(c=>{
+  const matches=c.name.toLowerCase().includes(q)||String(c.phone).includes(q);
+  if(!matches)return false;
+  if(currentFilter==="due")return owed(c)>0;
+  if(currentFilter==="paid")return Number(c.totalSold)>0&&owed(c)===0;
+  return true;
+ }).sort((a,b)=>owed(b)-owed(a)||a.name.localeCompare(b.name));
+ $("clientList").innerHTML=arr.length?arr.map(c=>`<button class="client ${c.id===selectedId?"active":""}" data-client="${c.id}"><div><b>${esc(c.name)}</b><div class="muted">${esc(c.phone)}</div></div><div class="right"><span class="muted">Falta</span><br><b>${money(owed(c))}</b></div></button>`).join(""):'<div class="empty">Nenhum cliente encontrado.</div>';
+ document.querySelectorAll("[data-client]").forEach(b=>b.addEventListener("click",()=>{selectedId=b.dataset.client;render()}));
+}
+function renderDetail(){
+ const c=selected();
+ if(!c){$("detail").innerHTML='<div class="empty"><b>Nenhum cliente cadastrado.</b><br><br>Toque em “+ Novo cliente” para começar.</div>';return}
+ const d=owed(c),quit=Number(c.totalSold)>0&&d===0;
+ $("detail").innerHTML=`<div class="row head"><div><span class="muted">CLIENTE</span><h2 style="margin:3px 0">${esc(c.name)}</h2><div class="muted">${esc(c.phone)}</div></div><div class="row"><button id="whatsBtn" class="btn green">Cobrar WhatsApp</button><button id="editBtn" class="btn light">Editar</button></div></div>
+ <div class="big"><div class="muted">Falta pagar</div><div class="amount">${money(d)}</div><span class="badge ${quit?"ok":""}">${quit?"✓ QUITADO":"Pagamento pendente"}</span></div>
+ <div class="twocol"><div class="mini"><span class="muted">Total vendido</span><b>${money(c.totalSold)}</b></div><div class="mini"><span class="muted">Total recebido</span><b>${money(c.totalPaid)}</b></div></div>
+ <div class="mainActions"><button id="addValueBtn" class="btn blue">+ Adicionar valor</button><button id="paymentBtn" class="btn dark">+ Receber pagamento</button></div>
+ <div class="muted" style="margin-top:15px">Recebimento rápido</div><div class="quick"><button class="btn light quickPay" data-v="50">R$ 50</button><button class="btn light quickPay" data-v="100">R$ 100</button><button class="btn light quickPay" data-v="200">R$ 200</button><button id="correctBtn" class="btn light">Corrigir saldo</button></div>`;
+ $("whatsBtn").onclick=sendWhats;
+ $("editBtn").onclick=openEdit;
+ $("addValueBtn").onclick=()=>openAmount("sale");
+ $("paymentBtn").onclick=()=>openAmount("payment");
+ $("correctBtn").onclick=openCorrect;
+ document.querySelectorAll(".quickPay").forEach(b=>b.onclick=()=>quickPayment(Number(b.dataset.v)));
+}
+function openModal(title,body){$("modalTitle").textContent=title;$("modalBody").innerHTML=body;$("modalBg").classList.add("show")}
+function closeModal(){$("modalBg").classList.remove("show")}
+$("modalBg").addEventListener("click",e=>{if(e.target===$("modalBg"))closeModal()});
+
+function openNew(){
+ openModal("Novo cliente",`<div class="field"><label>Nome</label><input id="nameInput" placeholder="Nome do cliente"></div><div class="field"><label>WhatsApp</label><input id="phoneInput" inputmode="tel" placeholder="51999999999"></div><div class="field"><label>Valor que já está devendo</label><input id="initialInput" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div><div class="modalActions"><button id="cancelModal" class="btn light">Cancelar</button><button id="saveNew" class="btn blue">Cadastrar</button></div>`);
+ $("cancelModal").onclick=closeModal;
+ $("saveNew").onclick=()=>{
+  const name=$("nameInput").value.trim(),phone=$("phoneInput").value.replace(/\D/g,""),initial=Number($("initialInput").value||0);
+  if(!name)return alert("Informe o nome do cliente.");
+  if(phone.length<10)return alert("Informe um telefone/WhatsApp válido.");
+  if(!Number.isFinite(initial)||initial<0)return alert("Informe um valor válido.");
+  const c={id:id(),name,phone,totalSold:initial,totalPaid:0,createdAt:new Date().toISOString()};
+  clients.push(c);selectedId=c.id;persist();closeModal();render();
+ };
+}
+function openEdit(){
+ const c=selected();
+ openModal("Editar cliente",`<div class="field"><label>Nome</label><input id="nameInput" value="${esc(c.name)}"></div><div class="field"><label>WhatsApp</label><input id="phoneInput" inputmode="tel" value="${esc(c.phone)}"></div><div class="modalActions"><button id="deleteClient" class="btn danger">Excluir cliente</button><button id="cancelModal" class="btn light">Cancelar</button><button id="saveEdit" class="btn blue">Salvar</button></div>`);
+ $("cancelModal").onclick=closeModal;
+ $("deleteClient").onclick=()=>{
+  if(!confirm(`Excluir ${c.name}?`))return;
+  clients=clients.filter(x=>x.id!==c.id);payments=payments.filter(x=>x.clientId!==c.id);selectedId=null;persist();closeModal();render();
+ };
+ $("saveEdit").onclick=()=>{
+  const name=$("nameInput").value.trim(),phone=$("phoneInput").value.replace(/\D/g,"");
+  if(!name||phone.length<10)return alert("Informe nome e WhatsApp válidos.");
+  c.name=name;c.phone=phone;persist();closeModal();render();
+ };
+}
+function openAmount(type){
+ const sale=type==="sale";
+ openModal(sale?"Adicionar valor":"Receber pagamento",`<div class="field"><label>${sale?"Valor da nova venda":"Valor recebido"}</label><input id="valueInput" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00"></div><div class="modalActions"><button id="cancelModal" class="btn light">Cancelar</button><button id="saveValue" class="btn blue">Salvar</button></div>`);
+ $("cancelModal").onclick=closeModal;
+ $("saveValue").onclick=()=>{
+  const v=Number($("valueInput").value),c=selected();
+  if(!Number.isFinite(v)||v<=0)return alert("Informe um valor válido.");
+  if(sale)c.totalSold=Number(c.totalSold)+v;
+  else registerPayment(v);
+  persist();closeModal();render();
+ };
+}
+function registerPayment(v){
+ const c=selected();c.totalPaid=Number(c.totalPaid)+v;
+ payments.push({id:id(),clientId:c.id,value:v,createdAt:new Date().toISOString()});
+}
+function quickPayment(v){
+ const c=selected();
+ if(!c)return;
+ if(!confirm(`Registrar pagamento de ${money(v)} para ${c.name}?`))return;
+ registerPayment(v);persist();render();
+}
+function openCorrect(){
+ const c=selected();
+ openModal("Corrigir saldo",`<div class="muted">Use esta opção se algum valor foi lançado errado.</div><div class="field"><label>Quanto o cliente deve agora?</label><input id="correctInput" type="number" min="0" step="0.01" inputmode="decimal" value="${owed(c)}"></div><div class="modalActions"><button id="cancelModal" class="btn light">Cancelar</button><button id="saveCorrect" class="btn blue">Corrigir</button></div>`);
+ $("cancelModal").onclick=closeModal;
+ $("saveCorrect").onclick=()=>{
+  const v=Number($("correctInput").value);
+  if(!Number.isFinite(v)||v<0)return alert("Informe um valor válido.");
+  c.totalSold=Number(c.totalPaid)+v;persist();closeModal();render();
+ };
+}
+function sendWhats(){
+ const c=selected(),d=owed(c);
+ const msg=d>0?`Olá, ${c.name}! Passando para informar que seu saldo pendente é de ${money(d)}. Obrigado!`:`Olá, ${c.name}! Sua conta está quitada. Obrigado!`;
+ let phone=String(c.phone).replace(/\D/g,"");
+ if(phone.length===10||phone.length===11)phone="55"+phone;
+ window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,"_blank");
+}
+
+$("newClientBtn").onclick=openNew;
+$("search").addEventListener("input",renderList);
+document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{currentFilter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));renderList()});
+restore();render();
+})();
+</script>
+</body></html>
