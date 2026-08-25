@@ -1,1 +1,1 @@
-1) Crie um projeto NOVO no Supabase. 2) Rode BANCO_SUPABASE.sql. 3) Copie URL e Publishable/Anon Key. 4) No index.html troque COLE_AQUI_SUA_URL_DO_SUPABASE e COLE_AQUI_SUA_CHAVE_PUBLICAVEL. 5) Envie os 6 arquivos do app ao GitHub. IMPORTANTE: esta v1 é para teste sem login; antes de cadastrar dados reais, adicione autenticação.
+Versão de teste local: não precisa de Supabase. Novo cliente aceita nome, WhatsApp e valor inicial devido. Os dados ficam salvos somente neste navegador/aparelho.
