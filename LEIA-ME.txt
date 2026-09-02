@@ -1,8 +1,6 @@
-Controle de Clientes v5
-Base: última versão com Supabase.
-Única alteração funcional: a cobrança do WhatsApp identifica automaticamente o horário do aparelho:
-00:00–11:59 Bom dia
-12:00–17:59 Boa tarde
-18:00–23:59 Boa noite
-
-Substitua os arquivos do GitHub pelos desta pasta. Nenhuma alteração no banco Supabase é necessária.
+CONTROLE DE CLIENTES v6
+- "Recebido no mês" calcula somente o mês atual e zera automaticamente quando vira o mês.
+- Nova aba/botão Estatísticas.
+- Mostra quanto foi recebido em cada mês.
+- Mostra o total recebido de todos os meses.
+- Não precisa alterar o banco Supabase.
