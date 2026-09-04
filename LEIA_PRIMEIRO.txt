@@ -1,0 +1,22 @@
+MEDIA KIT ISABELE — INTEGRAÇÃO INSTAGRAM
+
+O projeto está preparado para usar a Instagram Graph API com Facebook Login.
+Instagram User ID configurado: 17841403141975462
+Graph API padrão: v26.0
+
+ANTES DE PUBLICAR:
+1. Gere um NOVO token da Meta (o token usado nas capturas anteriores ficou exposto).
+2. Cadastre o token como segredo/variável do SERVIDOR:
+   INSTAGRAM_ACCESS_TOKEN=SEU_TOKEN
+   ou INSTAGRAM_LONG_LIVED_TOKEN=SEU_TOKEN
+3. Se INSTAGRAM_LONG_LIVED_TOKEN ficar vazio, o código usa INSTAGRAM_ACCESS_TOKEN automaticamente.
+4. Não use VITE_INSTAGRAM_ACCESS_TOKEN.
+5. Não faça commit de .env. O arquivo já está protegido no .gitignore.
+
+Para testar localmente:
+- copie .env.example para .env
+- coloque o novo token
+- npm install
+- npm run dev
+
+Mais detalhes: INSTAGRAM_SETUP.md
